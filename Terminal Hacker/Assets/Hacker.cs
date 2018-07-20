@@ -16,6 +16,7 @@ public class Hacker : MonoBehaviour {
 		new string[] { "officer", "jail cell", "handcuffs", "evidence" },
 		new string[] { "space", "gravity", "astronaut", "rocket", "space station", "lift off" }
 	};
+	const string menuHint = "You may type menu at any time";
 
 	void Start ()
 	{
@@ -40,6 +41,11 @@ public class Hacker : MonoBehaviour {
 		if ( input == "menu" || currentScreen == Screen.Win )
 		{
 			ShowMainMenu ();
+		}
+		else if ( input == "quit" || input == "close" || input == "exit" )
+		{
+			Terminal.WriteLine ( "If on the web, close the tab" );
+			Application.Quit();
 		}
 		else if ( currentScreen == Screen.MainMenu )
 		{
@@ -68,6 +74,7 @@ public class Hacker : MonoBehaviour {
 		else if (currentScreen == Screen.MainMenu)
 		{
 			Terminal.WriteLine ("Please choose a valid level.");
+			Terminal.WriteLine ( menuHint );
 		}
 	}
 
@@ -77,6 +84,7 @@ public class Hacker : MonoBehaviour {
 		currentScreen = Screen.Password;
 		Terminal.ClearScreen ();
 		Terminal.WriteLine ( "Enter your password, hint: " +  randomPassword.Anagram() );
+		Terminal.WriteLine ( menuHint );
 	}
 
 	void SetPassword ()
