@@ -5,17 +5,25 @@ using UnityEngine;
 public class Hacker : MonoBehaviour {
 
 	int level;
+	string randomPassword;
 	enum Screen { MainMenu, Password, Win };
 	Screen currentScreen;
 
-	// Use this for initialization
-	void Start ()
-    {
-		ShowMainMenu ();
-    }
+	// Passwords for each level.  Each new array line is a new level
+	string [][] levelPasswords =
+	{
+		new string[] { "locker", "classroom", "gym", "teacher", "student" },
+		new string[] { "officer", "jail cell", "handcuffs", "evidence" },
+		new string[] { "space", "gravity", "astronaut", "rocket", "space station", "lift off" }
+	};
 
-    private void ShowMainMenu ()
-    {
+	void Start ()
+	{
+		ShowMainMenu ();
+	}
+
+	private void ShowMainMenu ()
+	{
 		currentScreen = Screen.MainMenu;
 		Terminal.ClearScreen ();
 		Terminal.WriteLine ( "What would you like to hack into?" );
@@ -25,11 +33,11 @@ public class Hacker : MonoBehaviour {
 		Terminal.WriteLine ( "3. How about NASA?" );
 		Terminal.WriteLine ( "" );
 		Terminal.WriteLine ( "Choose a #. Press Enter to continue." );
-    }
+	}
 
 	void OnUserInput ( string input )
 	{
-		if ( input == "menu" )
+		if ( input == "menu" || currentScreen == Screen.Win )
 		{
 			ShowMainMenu ();
 		}
@@ -37,49 +45,61 @@ public class Hacker : MonoBehaviour {
 		{
 			RunMainMenu ( input );
 		}
+		else if ( currentScreen == Screen.Password )
+		{
+			CheckPassword ( input );
+		}
 	}
 
 	void RunMainMenu( string input )
 	{
-		if ( input ==  "1" )
+		int inputAsInt = int.Parse ( input );
+
+		// Assume that each array in levelPasswords is another allowed level
+		if ( inputAsInt >= 1 && inputAsInt <= levelPasswords.Length )
 		{
-			level = 1;
-			StartGame ();
+			level = inputAsInt;
+			AskForPassword ();
 		}
-		else if ( input == "2" )
-		{
-			level = 2;
-			StartGame ();
-		}
-		else if ( input == "3" )
-		{
-			level = 3;
-			StartGame ();
-		}
-		else if ( input == "4" )
-		{
-			level = 4;
-			StartGame ();
-		}
-		else if ( input == "007" )
+		else if ( input == "007" ) // Easter egg
 		{
 			Terminal.WriteLine ( "Welcome, Bond. Choose a level" );
 		}
-		else
+		else if (currentScreen == Screen.MainMenu)
 		{
-			Terminal.WriteLine ( "Please choose a valid level." );
+			Terminal.WriteLine ("Please choose a valid level.");
 		}
 	}
 
-	void StartGame()
+	void AskForPassword ()
 	{
+		SetPassword ();
 		currentScreen = Screen.Password;
-		Terminal.WriteLine ( "You have chosen level " + level);
-		Terminal.WriteLine ( "Enter a password");
+		Terminal.ClearScreen ();
+		Terminal.WriteLine ( "Enter your password, hint: " +  randomPassword.Anagram() );
 	}
 
-	// Update is called once per frame
-	void Update () {
-		
+	void SetPassword ()
+	{
+		randomPassword = levelPasswords [ level - 1 ] [ Random.Range ( 0, levelPasswords [ level - 1 ].Length ) ];
+	}
+
+	void CheckPassword ( string password )
+	{
+		if ( randomPassword == password )
+		{
+			DisplayWinScreen ();
+		}
+		else {
+			AskForPassword ();
+		}
+	}
+
+	void DisplayWinScreen ()
+	{
+		currentScreen = Screen.Win;
+		Terminal.ClearScreen ();
+		Terminal.WriteLine ( "Password accepted!" );
+		Terminal.WriteLine ( "Press Enter to continue" );
 	}
 }
