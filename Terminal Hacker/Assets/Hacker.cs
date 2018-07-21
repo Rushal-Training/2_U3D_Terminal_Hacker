@@ -18,7 +18,10 @@ public class Hacker : MonoBehaviour {
 	void Start ()
 	{
 		SetLevelPasswords ();
-		GetTotalWords ();
+        // initialize the array to the number of levels available
+        perLevelCompletedWords = new int[levels.Count - 1];
+
+        GetTotalWords ();
 		SetCompletedWordsCombinedTotal ();
 		ShowMainMenu ();
 	}
@@ -28,12 +31,9 @@ public class Hacker : MonoBehaviour {
 		// each add is a new level.
 		// level text displayed on terminal is the first add item
 		levels.Add ( new List<string> { "1. Let's try the school district.", "2. Maybe the Police Station.", "3. How about NASA?" } );
-		levels.Add ( new List<string> { "locker", "classroom", "gym", "teacher", "student" } );
+		levels.Add ( new List<string> { "locker", "lassroom", "gym", "teacher", "student" } );
 		levels.Add ( new List<string> { "officer", "jail cell", "handcuffs", "evidence" } );
 		levels.Add ( new List<string> { "space", "gravity", "astronaut", "rocket", "space station", "lift off" } );
-
-		// initialize the array to the number of levels available
-		perLevelCompletedWords = new int [levels.Count - 1];
 	}
 
 	void ShowMainMenu ()
@@ -144,7 +144,8 @@ public class Hacker : MonoBehaviour {
 
 			if ( completedWordsCombinedTotal >= totalWordsInGame )
 			{
-				DisplayWinScreen ();
+                ResetGame();
+                DisplayWinScreen ();
 			}
 			else
 			{
@@ -171,10 +172,6 @@ public class Hacker : MonoBehaviour {
 		Terminal.ClearScreen ();
 		Terminal.WriteLine ( "You've cracked all the passwords!" );
 		Terminal.WriteLine ( "Press Enter to restart!" );
-
-		SetLevelPasswords ();
-		GetTotalWords ();
-		SetCompletedWordsCombinedTotal ();
 	}
 
 	void GetTotalWords ()
@@ -194,4 +191,15 @@ public class Hacker : MonoBehaviour {
 			completedWordsCombinedTotal += total;
 		}
 	}
+
+    void ResetGame ()
+    {
+        levels.Clear();
+        for ( int i = 0; i < perLevelCompletedWords.Length; i++ )
+        {
+            perLevelCompletedWords[i] = 0;
+        }
+        SetCompletedWordsCombinedTotal();
+        SetLevelPasswords();
+    }
 }
